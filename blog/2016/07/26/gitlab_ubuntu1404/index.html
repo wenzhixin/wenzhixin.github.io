@@ -99,12 +99,9 @@
 
 <p>在新的服务器上通过 <code>apt-get</code> 安装与原服务器相同版本的安装包（7.13.5，不然会导致导入数据出错）。</p>
 
-<ul>
-<li><ol>
+<ol>
 <li>安装需要的依赖包</li>
 </ol>
-</li>
-</ul>
 
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -115,24 +112,18 @@
 </span><span class='line'>sudo apt-get install curl openssh-server ca-certificates postfix</span></code></pre></td></tr></table></div></figure>
 
 
-<ul>
-<li><ol>
+<ol>
 <li>信任 GitLab 的 GPG 公钥</li>
 </ol>
-</li>
-</ul>
 
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>curl https://packages.gitlab.com/gpg.key 2&gt; /dev/null | sudo apt-key add - &&gt;/dev/null</span></code></pre></td></tr></table></div></figure>
 
 
-<ul>
-<li><ol>
+<ol>
 <li>添加源并安装</li>
 </ol>
-</li>
-</ul>
 
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -153,20 +144,21 @@
 
 <p><em>注：由于官网存在墙的问题，我们使用了清华大学的源进行安装。</em></p>
 
-<ul>
-<li><ol>
+<ol>
 <li>配置并启动</li>
 </ol>
-</li>
-</ul>
 
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 </pre></td><td class='code'><pre><code class=''><span class='line'>sudo gitlab-ctl reconfigure</span></code></pre></td></tr></table></div></figure>
 
 
-<p><em>注：这个版本由于 <a href="https://gitlab.com/gitlab-org/gitlab-ce/issues/2444">bug</a> 导致一直配置不成功，需要删除 mattermost 的内容才行。</em>
-* 5. 访问并使用</p>
+<p><em>注：这个版本由于 <a href="https://gitlab.com/gitlab-org/gitlab-ce/issues/2444">bug</a> 导致一直配置不成功，需要删除 mattermost 的内容才行。</em></p>
+
+<ol>
+<li>访问并使用</li>
+</ol>
+
 
 <p>首次打开需要初始化管理员（root）的密码，初始化完成之后跳转到登录接口，可登录使用。
 到这里我们已经在新的服务器上安装了全新的 gitlab-ce。</p>
@@ -175,12 +167,9 @@
 
 <p>在原来的机器上，我们需要将版本库数据以及数据库数据导出为文件，以便在新系统中使用。</p>
 
-<ul>
-<li><ol>
+<ol>
 <li>导出版本库数据</li>
 </ol>
-</li>
-</ul>
 
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -217,12 +206,9 @@
 
 <p>就表示备份完成了，该文件存在于 <code>/home/git/gitlab/tmp/backups</code> 文件夹下。</p>
 
-<ul>
-<li><ol>
+<ol>
 <li>导出数据库文件</li>
 </ol>
-</li>
-</ul>
 
 
 <p>退出 root 用户，通过命令行对 MySQL 进行备份</p>
@@ -237,12 +223,9 @@
 
 <p>由于之前用的是 MySQL，因为 MySQL 有一些问题，官方建议使用 PostgreSQL 来代替 MySQL。迁移的原理是先将 MySQL 导出为 sql 文件，然后使用工具将其转换为 PostgreSQL 的文件并导入到 PostgreSQL 中。</p>
 
-<ul>
-<li><ol>
+<ol>
 <li>安装所需的库</li>
 </ol>
-</li>
-</ul>
 
 
 <figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
@@ -263,12 +246,9 @@
 </span><span class='line'>sudo gem install bundle</span></code></pre></td></tr></table></div></figure>
 
 
-<ul>
-<li><ol>
+<ol>
 <li>开始迁移</li>
 </ol>
-</li>
-</ul>
 
 
 <p>解压我们的压缩包，我们将其解压到一个空的目录 <code>tar_me_from_inside</code> 下，并删除原来的 tar 文件</p>
