@@ -4,7 +4,7 @@
   <title><![CDATA[文志新的博客]]></title>
   <link href="http://wenzhixin.github.io/atom.xml" rel="self"/>
   <link href="http://wenzhixin.github.io/"/>
-  <updated>2016-07-26T02:05:10+00:00</updated>
+  <updated>2016-07-26T02:22:45+00:00</updated>
   <id>http://wenzhixin.github.io/</id>
   <author>
     <name><![CDATA[文志新]]></name>
@@ -12,6 +12,442 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[安装 GitLab 到 Ubuntu14.04，配置和迁移]]></title>
+    <link href="http://wenzhixin.github.io/blog/2016/07/26/gitlab_ubuntu1404/"/>
+    <updated>2016-07-26T10:21:35+00:00</updated>
+    <id>http://wenzhixin.github.io/blog/2016/07/26/gitlab_ubuntu1404</id>
+    <content type="html"><![CDATA[<p>现在 gitlab 最新的版本是可以直接通过 <code>apt-get</code> 进行安装升级的。以前公司安装的版本都是通过命令行的方式进行安装，很麻烦也容易出错。现在尝试从 Ubuntu12.04 非集成版迁移到 Ubuntu14.04 apt 版本。花了不少时间，这里记录下最简单的步骤。</p>
+
+<p>我们迁移的关键点为：</p>
+
+<ul>
+<li>系统迁移，从 Ubuntu12.04 到 Ubuntu14.04</li>
+<li>数据库迁移，从 MySQL 到 PostgreSQL</li>
+<li>软件版本迁移，从非集成版到集成版（deb包）</li>
+</ul>
+
+
+<h3>安装 gitlab</h3>
+
+<p>在新的服务器上通过 <code>apt-get</code> 安装与原服务器相同版本的安装包（7.13.5，不然会导致导入数据出错）。</p>
+
+<ul>
+<li><ol>
+<li>安装需要的依赖包</li>
+</ol>
+</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo apt-get update
+</span><span class='line'>sudo apt-get dist-upgrade
+</span><span class='line'>sudo apt-get install curl openssh-server ca-certificates postfix</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><ol>
+<li>信任 GitLab 的 GPG 公钥</li>
+</ol>
+</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>curl https://packages.gitlab.com/gpg.key 2&gt; /dev/null | sudo apt-key add - &&gt;/dev/null</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><ol>
+<li>添加源并安装</li>
+</ol>
+</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo vi /etc/apt/sources.list.d/gitlab-ce.list
+</span><span class='line'>
+</span><span class='line'>deb https://mirrors.tuna.tsinghua.edu.cn/gitlab-ce/ubuntu trusty main
+</span><span class='line'>
+</span><span class='line'># sudo apt-get install apt-transport-https
+</span><span class='line'>sudo apt-get update
+</span><span class='line'>sudo apt-get install gitlab-ce=7.13.5-ce.0</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>注：由于官网存在墙的问题，我们使用了清华大学的源进行安装。</em></p>
+
+<ul>
+<li><ol>
+<li>配置并启动</li>
+</ol>
+</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo gitlab-ctl reconfigure</span></code></pre></td></tr></table></div></figure>
+
+
+<p><em>注：这个版本由于 <a href="https://gitlab.com/gitlab-org/gitlab-ce/issues/2444">bug</a> 导致一直配置不成功，需要删除 mattermost 的内容才行。</em>
+* 5. 访问并使用</p>
+
+<p>首次打开需要初始化管理员（root）的密码，初始化完成之后跳转到登录接口，可登录使用。
+到这里我们已经在新的服务器上安装了全新的 gitlab-ce。</p>
+
+<h3>导出数据</h3>
+
+<p>在原来的机器上，我们需要将版本库数据以及数据库数据导出为文件，以便在新系统中使用。</p>
+
+<ul>
+<li><ol>
+<li>导出版本库数据</li>
+</ol>
+</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'># 切换为 root 用户，不然会有权限问题
+</span><span class='line'>sudo -i
+</span><span class='line'>
+</span><span class='line'># 停止 gitlab
+</span><span class='line'>
+</span><span class='line'>service gitlab stop
+</span><span class='line'>
+</span><span class='line'># 进入 gitlab 工程目录
+</span><span class='line'>cd /home/git/gitlab/
+</span><span class='line'>
+</span><span class='line'># 备份版本库数据
+</span><span class='line'>bundle exec rake gitlab:backup:create RAILS_ENV=production</span></code></pre></td></tr></table></div></figure>
+
+
+<p>看到如下信息：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Creating backup archive: 1461142074_gitlab_backup.tar ... done</span></code></pre></td></tr></table></div></figure>
+
+
+<p>就表示备份完成了，该文件存在于 <code>/home/git/gitlab/tmp/backups</code> 文件夹下。</p>
+
+<ul>
+<li><ol>
+<li>导出数据库文件</li>
+</ol>
+</li>
+</ul>
+
+
+<p>退出 root 用户，通过命令行对 MySQL 进行备份</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mysqldump --compatible=postgresql --default-character-set=utf8 -r current_install.mysql -u root gitlabhq_production -p</span></code></pre></td></tr></table></div></figure>
+
+
+<p>导出完成后，将 1461142074_gitlab_backup.tar 和 current_install.mysql 拷贝（scp）到新的服务器上备用。</p>
+
+<h3>迁移</h3>
+
+<p>由于之前用的是 MySQL，因为 MySQL 有一些问题，官方建议使用 PostgreSQL 来代替 MySQL。迁移的原理是先将 MySQL 导出为 sql 文件，然后使用工具将其转换为 PostgreSQL 的文件并导入到 PostgreSQL 中。</p>
+
+<ul>
+<li><ol>
+<li>安装所需的库</li>
+</ol>
+</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo apt-get install ed software-properties-common
+</span><span class='line'>
+</span><span class='line'>sudo apt-add-repository ppa:brightbox/ruby-ng
+</span><span class='line'>sudo apt-get update
+</span><span class='line'>sudo apt-get install ruby2.2
+</span><span class='line'>
+</span><span class='line'># gem sources --add https://ruby.taobao.org/ --remove https://rubygems.org/
+</span><span class='line'>sudo gem install bundle</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li><ol>
+<li>开始迁移</li>
+</ol>
+</li>
+</ul>
+
+
+<p>解压我们的压缩包，我们将其解压到一个空的目录 <code>tar_me_from_inside</code> 下，并删除原来的 tar 文件</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mkdir ~/tar_me_from_inside && cd ~/tar_me_from_inside  
+</span><span class='line'>tar -xvf ~/1461142074_gitlab_backup.tar  
+</span><span class='line'>rm ~/1461142074_gitlab_backup.tar</span></code></pre></td></tr></table></div></figure>
+
+
+<p>官网上提供了工具可以将 MySQL 转换为 PostgreSQL</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd ~/  
+</span><span class='line'>git clone -b gitlab https://github.com/gitlabhq/mysql-postgresql-converter.git
+</span><span class='line'>
+</span><span class='line'>cd ~/mysql-postgresql-converter  
+</span><span class='line'>python db_converter.py ~/current_install.mysql ~/database.psql
+</span><span class='line'>ed -s ~/database.psql &lt; move_drop_indexes.ed</span></code></pre></td></tr></table></div></figure>
+
+
+<p>替换原来的 db 文件</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd ~/tar_me_from_inside/db
+</span><span class='line'>
+</span><span class='line'>rm database.sql.gz
+</span><span class='line'>mv ~/database.psql database.sql
+</span><span class='line'>gzip database.sql</span></code></pre></td></tr></table></div></figure>
+
+
+<p>现在，我们将其压缩为原来的文件名</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd ~/tar_me_from_inside 
+</span><span class='line'>tar -zcvf ~/1461142074_gitlab_backup.tar . 
+</span><span class='line'>cd ~/</span></code></pre></td></tr></table></div></figure>
+
+
+<p>接着，我们将生成的 tar 文件拷贝到 <code>/var/opt/gitlab/backups</code> 下</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo mv 1461142074_gitlab_backup.tar /var/opt/gitlab/backups</span></code></pre></td></tr></table></div></figure>
+
+
+<p>停用 <code>unicorn</code> 和 <code>sidekiq</code> 并进行恢复</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo gitlab-ctl stop unicorn  
+</span><span class='line'>sudo gitlab-ctl stop sidekiq  
+</span><span class='line'>sudo gitlab-rake gitlab:backup:restore BACKUP=1461142074
+</span><span class='line'>
+</span><span class='line'>sudo gitlab-ctl start unicorn  
+</span><span class='line'>sudo gitlab-ctl start sidekiq  </span></code></pre></td></tr></table></div></figure>
+
+
+<p>最后，配置<code>/etc/gitlab/gitlab.rb</code>文件，将 url 改成服务器所在的 IP 或域名，并将 gitlab 升级到最新版本</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo apt-get update
+</span><span class='line'>sudo apt-get upgrade</span></code></pre></td></tr></table></div></figure>
+
+
+<p>大功告成！</p>
+
+<hr />
+
+<p>从 7.13.5 升级到 8.6.6 会有一系列的问题。这里记录下：</p>
+
+<p><code>apt-get update</code> 遇到的问题</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Recipe: gitlab::database_migrations
+</span><span class='line'>  * bash[migrate gitlab-rails database] action runrake aborted!
+</span><span class='line'>StandardError: An error has occurred, this and all later migrations canceled:
+</span><span class='line'>
+</span><span class='line'>PG::DuplicateTable: ERROR:  relation "project_group_links" already exists</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="https://gitlab.com/gitlab-org/gitlab-ce/issues/14305">解决</a>:</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo gitlab-rails dbconsole
+</span><span class='line'>psql (9.2.15, server 9.3.10)
+</span><span class='line'>WARNING: psql version 9.2, server version 9.3.
+</span><span class='line'>         Some psql features might not work.
+</span><span class='line'>Type "help" for help.
+</span><span class='line'>
+</span><span class='line'>gitlabhq_production=# INSERT INTO schema_migrations (version) values ('20130711063759');
+</span><span class='line'>INSERT 0 1
+</span><span class='line'>gitlabhq_production-# INSERT INTO schema_migrations (version) values ('20130820102832');
+</span><span class='line'>INSERT 0 1
+</span><span class='line'>gitlabhq_production=# 
+</span><span class='line'>
+</span><span class='line'>exit
+</span><span class='line'>sudo gitlab-ctl reconfigure
+</span><span class='line'>sudo gitlab-rake db:migrate RAILS_ENV=production</span></code></pre></td></tr></table></div></figure>
+
+
+<hr />
+
+<p><code>migrate</code> 的过程出现的问题（类似的问题需要删除数据库）：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>PG::DuplicateTable: ERROR:  relation "sent_notifications" already exists</span></code></pre></td></tr></table></div></figure>
+
+
+<p><a href="https://gitlab.com/gitlab-org/gitlab-ce/issues/3494">解决</a>：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>sudo gitlab-rails db
+</span><span class='line'>drop table sent_notifications;
+</span><span class='line'>drop table lfs_objects;
+</span><span class='line'>drop table lfs_objects_projects;
+</span><span class='line'>drop table releases;
+</span><span class='line'>drop table spam_logs;
+</span><span class='line'>drop table todos;
+</span><span class='line'>sudo gitlab-rake db:migrate RAILS_ENV=production</span></code></pre></td></tr></table></div></figure>
+
+
+<hr />
+
+<p>配置邮件网关发送邮件的问题</p>
+
+<p><a href="https://gitlab.com/gitlab-org/omnibus-gitlab/issues/155">解决</a></p>
+
+<ul>
+<li>configuration gitlab.yml</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vi /var/opt/gitlab/gitlab-rails/etc/gitlab.yml
+</span><span class='line'>
+</span><span class='line'>email_from: git@xxxx.com</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>configuration production.rb</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vi /opt/gitlab/embedded/service/gitlab-rails/config/environments/production.rb
+</span><span class='line'>
+</span><span class='line'>#config.action_mailer.delivery_method = :sendmail
+</span><span class='line'>config.action_mailer.delivery_method = :smtp 
+</span><span class='line'>config.action_mailer.perform_deliveries = true 
+</span><span class='line'>config.action_mailer.raise_delivery_errors = true</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>configure smtp</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>vi /opt/gitlab/embedded/service/gitlab-rails/config/initializers/smtp_settings.rb 
+</span><span class='line'>
+</span><span class='line'>if Rails.env.production? Gitlab::Application.config.action_mailer.delivery_method = :smtp
+</span><span class='line'>ActionMailer::Base.smtp_settings = 
+</span><span class='line'>  { 
+</span><span class='line'>    address: "mail.xxx.com", 
+</span><span class='line'>    port: 25, 
+</span><span class='line'>    user_name: "git@xxx.com", 
+</span><span class='line'>    password: "password", 
+</span><span class='line'>    domain: "xxx.com", 
+</span><span class='line'>    authentication: :login, 
+</span><span class='line'>    enable_starttls_auto: true 
+</span><span class='line'>  }</span></code></pre></td></tr></table></div></figure>
+
+
+<ul>
+<li>test gitlab email notification via change the user email address, from the below log, it seems the email has been sent by gitlab.</li>
+</ul>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>tail -f /var/log/gitlab/gitlab-rails/production.log Sent mail to git@xxx.com (3053.2ms)</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[开发 Vue-bootstrap-table 组件之单文件组件]]></title>

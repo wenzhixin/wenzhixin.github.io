@@ -5,7 +5,7 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>文志新的博客</title>
+  <title>安装 GitLab 到 Ubuntu14.04，配置和迁移 - 文志新的博客</title>
   <meta name="author" content="文志新">
 
   
@@ -18,7 +18,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://wenzhixin.github.io/">
+  <link rel="canonical" href="http://wenzhixin.github.io/blog/2016/07/26/gitlab_ubuntu1404/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="文志新的博客" type="application/atom+xml">
@@ -63,15 +63,12 @@
 </nav>
   <div id="main">
     <div id="content">
-      <div class="blog-index">
+      <div>
+<article class="hentry" role="article">
   
-  
-  
-    <article>
-      
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2016/07/26/gitlab_ubuntu1404/">安装 GitLab 到 Ubuntu14.04，配置和迁移</a></h1>
+      <h1 class="entry-title">安装 GitLab 到 Ubuntu14.04，配置和迁移</h1>
     
     
       <p class="meta">
@@ -87,7 +84,7 @@
   </header>
 
 
-  <div class="entry-content"><p>现在 gitlab 最新的版本是可以直接通过 <code>apt-get</code> 进行安装升级的。以前公司安装的版本都是通过命令行的方式进行安装，很麻烦也容易出错。现在尝试从 Ubuntu12.04 非集成版迁移到 Ubuntu14.04 apt 版本。花了不少时间，这里记录下最简单的步骤。</p>
+<div class="entry-content"><p>现在 gitlab 最新的版本是可以直接通过 <code>apt-get</code> 进行安装升级的。以前公司安装的版本都是通过命令行的方式进行安装，很麻烦也容易出错。现在尝试从 Ubuntu12.04 非集成版迁移到 Ubuntu14.04 apt 版本。花了不少时间，这里记录下最简单的步骤。</p>
 
 <p>我们迁移的关键点为：</p>
 
@@ -516,120 +513,52 @@
 </pre></td><td class='code'><pre><code class=''><span class='line'>tail -f /var/log/gitlab/gitlab-rails/production.log Sent mail to git@xxx.com (3053.2ms)</span></code></pre></td></tr></table></div></figure>
 
 </div>
-  
-  
 
 
-    </article>
-  
-  
-    <article>
+  <footer>
+    <p class="meta">
       
-  <header>
+  
+
+<span class="byline author vcard">Posted by <span class="fn">文志新</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2016-07-26T10:21:35+00:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>10:21 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/gitlab/'>gitlab</a>, <a class='category' href='/blog/categories/ubuntu/'>ubuntu</a>
+  
+</span>
+
+
+    </p>
     
-      <h1 class="entry-title"><a href="/blog/2016/07/26/hello-vue-component/">开发 Vue-bootstrap-table 组件之单文件组件</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2016-07-26T09:58:44+00:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>9:58 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>根据文档<a href="http://vuejs.org.cn/guide/application.html#%E5%8D%95%E6%96%87%E4%BB%B6%E7%BB%84%E4%BB%B6">单文件组件</a>一节，我们可以将组件集成为一个文件，将 html，css，JavaScript 代码都放到同个文件中，最终编译成我们想要的文件。vue 文件的基本模板为：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;template&gt;
-</span><span class='line'>    &lt;div&gt;
-</span><span class='line'>        &lt;h1&gt;&lt;/h1&gt;
-</span><span class='line'>    &lt;/div&gt;
-</span><span class='line'>&lt;/template&gt;
-</span><span class='line'>&lt;script&gt;
-</span><span class='line'>module.export = {
-</span><span class='line'>    props: {
-</span><span class='line'>        message: {
-</span><span class='line'>            type: String,
-</span><span class='line'>            default: 'Hello Vue.js'
-</span><span class='line'>        }
-</span><span class='line'>    }
-</span><span class='line'>};
-</span><span class='line'>&lt;/script&gt;
-</span><span class='line'>&lt;style&gt;
-</span><span class='line'>h1 {font-size: 24px;}
-</span><span class='line'>&lt;/style&gt;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>其中 template 为 html 代码，script 为 JavaScript 代码，style 为 css 代码。</p>
-
-<p>这里使用最简单的例子理解如何创建 vue 单文件组件，我们将该文件保存为 <code>Hello.vue</code>，并创建 <code>main.js</code> 文件：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>Hello = require('./Hello.vue');
-</span><span class='line'>module.exports = Hello;</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后使用官方工具<a href="https://github.com/vuejs/vue-cli">vue-cli</a>，对我们的组件进行编译，提供了几个模板：</p>
-
-<ul>
-<li><p><a href="https://github.com/vuejs-templates/webpack">webpack</a> - A full-featured Webpack + vue-loader setup with hot reload, linting, testing &amp; css extraction.</p></li>
-<li><p><a href="https://github.com/vuejs-templates/webpack-simple">webpack-simple</a> - A simple Webpack + vue-loader setup for quick prototyping.</p></li>
-<li><p><a href="https://github.com/vuejs-templates/browserify">browserify</a> - A full-featured Browserify + vueify setup with hot-reload, linting &amp; unit testing.</p></li>
-<li><p><a href="https://github.com/vuejs-templates/browserify-simple">browserify-simple</a> - A simple Browserify + vueify setup for quick prototyping.</p></li>
-<li><p><a href="https://github.com/vuejs-templates/simple">simple</a> - The simplest possible Vue setup in a single HTML file</p></li>
-</ul>
-
-
-<p>在这里我使用的是 browserify-simple 的方式。根据文档进行安装即可：</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>vue init bro"wserify-simple hello</span></code></pre></td></tr></table></div></figure>
-
-
-<p>然后将上面创建两个文件放到 hello/src 下，然后修改 package.json 中的</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>"build": "cross-env NODE_ENV=production browserify src/main.js &gt; dist/vue-hello.js"</span></code></pre></td></tr></table></div></figure>
-
-
-<p>运行 <code>npm run build</code>，就可以在 dist 下得到我们想要的文件了。</p>
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://wenzhixin.github.io/blog/2016/07/26/gitlab_ubuntu1404/" data-via="" data-counturl="http://wenzhixin.github.io/blog/2016/07/26/gitlab_ubuntu1404/" >Tweet</a>
+  
+  
+  
 </div>
-  
-  
 
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2016/07/26/hello-vue-component/" title="Previous Post: 开发 vue-bootstrap-table 组件之单文件组件">&laquo; 开发 vue-bootstrap-table 组件之单文件组件</a>
+      
+      
+    </p>
+  </footer>
+</article>
 
-    </article>
-  
-  <div class="pagination">
-    
-    <a href="/blog/archives">Blog Archives</a>
-    
-  </div>
 </div>
+
 <aside class="sidebar">
   
     <section>
@@ -653,6 +582,7 @@
 
   
 </aside>
+
 
     </div>
   </div>
