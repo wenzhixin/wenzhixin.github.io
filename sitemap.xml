@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 <url>
+<loc>http://wenzhixin.github.io/blog/2016/08/03/php-git-hooks/</loc>
+<lastmod>2016-08-03T10:25:04+00:00</lastmod>
+</url>
+<url>
+<loc>http://wenzhixin.github.io/blog/2016/07/29/105456/</loc>
+<lastmod>2016-07-29T10:52:54+00:00</lastmod>
+</url>
+<url>
 <loc>http://wenzhixin.github.io/blog/2016/07/26/gitlab_ubuntu1404/</loc>
 <lastmod>2016-07-26T10:21:35+00:00</lastmod>
 </url>
@@ -25,5 +33,20 @@
 </url>
 <url>
 <loc>http://wenzhixin.github.io/blog/categories/ubuntu/</loc>
+</url>
+<url>
+<loc>http://wenzhixin.github.io/blog/categories/test1/</loc>
+</url>
+<url>
+<loc>http://wenzhixin.github.io/blog/categories/test2/</loc>
+</url>
+<url>
+<loc>http://wenzhixin.github.io/blog/categories/test3/</loc>
+</url>
+<url>
+<loc>http://wenzhixin.github.io/blog/categories/git/</loc>
+</url>
+<url>
+<loc>http://wenzhixin.github.io/blog/categories/php/</loc>
 </url>
 </urlset>

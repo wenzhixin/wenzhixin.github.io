@@ -9,7 +9,10 @@
   <meta name="author" content="文志新">
 
   
-  <meta name="description" content="现在 gitlab 最新的版本是可以直接通过 apt-get 进行安装升级的。以前公司安装的版本都是通过命令行的方式进行安装，很麻烦也容易出错。现在尝试从 Ubuntu12.04 非集成版迁移到 Ubuntu14.04 apt 版本。花了不少时间，这里记录下最简单的步骤。 我们迁移的关键点为： &hellip;">
+  <meta name="description" content="由于 php 是运行在 nginx 下的，直接使用 shell_exec 会出现权限问题，所以我们首先需要解决权限问题。 登录到 www-data 用户 1
+2
+usermod -s /bin/bash www-data
+su www-data 创建 id_rsa 并将内容复制到目标 git 中 &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -65,6 +68,128 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/08/03/php-git-hooks/">如何简单的在 Php 下运行 Git Hook，实现自动部署</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-08-03T10:25:04+00:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>3</span><span class='date-suffix'>rd</span>, <span class='date-year'>2016</span></span> <span class='time'>10:25 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>由于 php 是运行在 nginx 下的，直接使用 shell_exec 会出现权限问题，所以我们首先需要解决权限问题。</p>
+
+<ol>
+<li>登录到 www-data 用户</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>usermod -s /bin/bash www-data
+</span><span class='line'>su www-data
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>创建 id_rsa 并将内容复制到目标 git 中</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-keygen -t rsa -C <span class="s2">&quot;wenzhixin2010@gmail.com&quot;</span>
+</span><span class='line'>
+</span><span class='line'>cat ~/.ssh/id_rsa.pub
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>测试并 clone 所需要的仓库</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh -T git@github.com
+</span><span class='line'>git clone git@github.com:wenzhixin/php-blog
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>添加 api.php 文件</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;xxx&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nb">shell_exec</span><span class="p">(</span><span class="s1">&#39;git pull &gt; logs/git.log&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>在 git 仓库中设置 WebHooks 即可</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">URL</span><span class="o">:</span> <span class="nx">api</span><span class="o">.</span><span class="nx">php</span><span class="o">?</span><span class="nb">key</span><span class="o">=</span><span class="nx">xxx</span>
+</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/07/29/105456/">Test</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-07-29T10:52:54+00:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>10:52 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Hello Test.</p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -615,6 +740,14 @@
     <section>
   <h1>Recent Posts</h1>
   <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2016/08/03/php-git-hooks/">如何简单的在 Php 下运行 Git Hook，实现自动部署</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2016/07/29/105456/">Test</a>
+      </li>
     
       <li class="post">
         <a href="/blog/2016/07/26/gitlab_ubuntu1404/">安装 GitLab 到 Ubuntu14.04，配置和迁移</a>

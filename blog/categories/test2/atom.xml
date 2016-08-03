@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Test2 | 文志新的博客]]></title>
+  <link href="http://wenzhixin.github.io/blog/categories/test2/atom.xml" rel="self"/>
+  <link href="http://wenzhixin.github.io/"/>
+  <updated>2016-08-03T02:36:14+00:00</updated>
+  <id>http://wenzhixin.github.io/</id>
+  <author>
+    <name><![CDATA[文志新]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Test]]></title>
+    <link href="http://wenzhixin.github.io/blog/2016/07/29/105456/"/>
+    <updated>2016-07-29T10:52:54+00:00</updated>
+    <id>http://wenzhixin.github.io/blog/2016/07/29/105456</id>
+    <content type="html"><![CDATA[<p>Hello Test.</p>
+]]></content>
+  </entry>
+  
+</feed>

@@ -4,7 +4,7 @@
   <title><![CDATA[文志新的博客]]></title>
   <link href="http://wenzhixin.github.io/atom.xml" rel="self"/>
   <link href="http://wenzhixin.github.io/"/>
-  <updated>2016-07-26T02:42:56+00:00</updated>
+  <updated>2016-08-03T02:36:14+00:00</updated>
   <id>http://wenzhixin.github.io/</id>
   <author>
     <name><![CDATA[文志新]]></name>
@@ -12,6 +12,88 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[如何简单的在 Php 下运行 Git Hook，实现自动部署]]></title>
+    <link href="http://wenzhixin.github.io/blog/2016/08/03/php-git-hooks/"/>
+    <updated>2016-08-03T10:25:04+00:00</updated>
+    <id>http://wenzhixin.github.io/blog/2016/08/03/php-git-hooks</id>
+    <content type="html"><![CDATA[<p>由于 php 是运行在 nginx 下的，直接使用 shell_exec 会出现权限问题，所以我们首先需要解决权限问题。</p>
+
+<ol>
+<li>登录到 www-data 用户</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>usermod -s /bin/bash www-data
+</span><span class='line'>su www-data
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>创建 id_rsa 并将内容复制到目标 git 中</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh-keygen -t rsa -C <span class="s2">&quot;wenzhixin2010@gmail.com&quot;</span>
+</span><span class='line'>
+</span><span class='line'>cat ~/.ssh/id_rsa.pub
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>测试并 clone 所需要的仓库</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='bash'><span class='line'>ssh -T git@github.com
+</span><span class='line'>git clone git@github.com:wenzhixin/php-blog
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>添加 api.php 文件</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="o">&lt;?</span><span class="nx">php</span>
+</span><span class='line'><span class="k">if</span> <span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="s1">&#39;key&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;xxx&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nb">shell_exec</span><span class="p">(</span><span class="s1">&#39;git pull &gt; logs/git.log&#39;</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>在 git 仓库中设置 WebHooks 即可</li>
+</ol>
+
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">URL</span><span class="o">:</span> <span class="nx">api</span><span class="o">.</span><span class="nx">php</span><span class="o">?</span><span class="nb">key</span><span class="o">=</span><span class="nx">xxx</span>
+</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Test]]></title>
+    <link href="http://wenzhixin.github.io/blog/2016/07/29/105456/"/>
+    <updated>2016-07-29T10:52:54+00:00</updated>
+    <id>http://wenzhixin.github.io/blog/2016/07/29/105456</id>
+    <content type="html"><![CDATA[<p>Hello Test.</p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[安装 GitLab 到 Ubuntu14.04，配置和迁移]]></title>
