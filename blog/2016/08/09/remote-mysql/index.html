@@ -5,12 +5,13 @@
 <!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
 <head>
   <meta charset="utf-8">
-  <title>Test - 文志新的博客</title>
+  <title>远程访问非标准 MySQL - 文志新的博客</title>
   <meta name="author" content="文志新">
 
   
-  <meta name="description" content="Hello Test.
-">
+  <meta name="description" content="当使用非标准安装 MySQL 的情况下，如何开启远程访问呢？对这个问题进行了研究。 登录到远程服务器，登录 MySQL： 1
+mysql -uroot -ppassword 报了下面的错误： 1
+Can’t connect to local MySQL server through socket &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -19,7 +20,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   
-  <link rel="canonical" href="http://wenzhixin.github.io/blog/2016/07/29/105456/">
+  <link rel="canonical" href="http://wenzhixin.github.io/blog/2016/08/09/remote-mysql/">
   <link href="/favicon.png" rel="icon">
   <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
   <link href="/atom.xml" rel="alternate" title="文志新的博客" type="application/atom+xml">
@@ -69,7 +70,7 @@
   
   <header>
     
-      <h1 class="entry-title">Test</h1>
+      <h1 class="entry-title">远程访问非标准 MySQL</h1>
     
     
       <p class="meta">
@@ -78,14 +79,48 @@
 
 
 
-<time class='entry-date' datetime='2016-07-29T10:52:54+00:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>10:52 am</span></time>
+<time class='entry-date' datetime='2016-08-09T11:02:05+00:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>11:02 am</span></time>
         
       </p>
     
   </header>
 
 
-<div class="entry-content"><p>Hello Test.</p>
+<div class="entry-content"><p>当使用非标准安装 MySQL 的情况下，如何开启远程访问呢？对这个问题进行了研究。</p>
+
+<ol>
+<li>登录到远程服务器，登录 MySQL：</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mysql -uroot -ppassword</span></code></pre></td></tr></table></div></figure>
+
+
+<p>报了下面的错误：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Can’t connect to local MySQL server through socket /tmp/mysql.sock</span></code></pre></td></tr></table></div></figure>
+
+
+<p>原因是 sock 文件不是默认的位置，而是 <code>/tmp/mysql-generic-5.5.40.sock</code>，做个软链接解决：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ln -s /tmp/mysql-generic-5.5.40.sock /tmp/mysql.sock</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>可以正常登录了，退出到本地，登录发现还是不能访问，还需要修改 MySQL 参数，重启即可：</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>skip_networking: on #开启即启动端口监听，如需要使用IP地址访问请开启</span></code></pre></td></tr></table></div></figure>
+
+
+<hr />
+
+<p>标准 MySQL 设置详见文章：<a href="http://wenzhixin.net.cn/2012/05/15/mysql_open_the_remote_access_ubuntu">MySQL、Postgres 开启远程访问权限</a></p>
 </div>
 
 
@@ -101,12 +136,12 @@
 
 
 
-<time class='entry-date' datetime='2016-07-29T10:52:54+00:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>10:52 am</span></time>
+<time class='entry-date' datetime='2016-08-09T11:02:05+00:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>11:02 am</span></time>
       
 
 <span class="categories">
   
-    <a class='category' href='/blog/categories/test1/'>test1</a>, <a class='category' href='/blog/categories/test2/'>test2</a>, <a class='category' href='/blog/categories/test3/'>test3</a>
+    <a class='category' href='/blog/categories/mysql/'>mysql</a>
   
 </span>
 
@@ -115,7 +150,7 @@
     
       <div class="sharing">
   
-  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://wenzhixin.github.io/blog/2016/07/29/105456/" data-via="" data-counturl="http://wenzhixin.github.io/blog/2016/07/29/105456/" >Tweet</a>
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://wenzhixin.github.io/blog/2016/08/09/remote-mysql/" data-via="" data-counturl="http://wenzhixin.github.io/blog/2016/08/09/remote-mysql/" >Tweet</a>
   
   
   
@@ -124,10 +159,8 @@
     
     <p class="meta">
       
-        <a class="basic-alignment left" href="/blog/2016/07/26/gitlab_ubuntu1404/" title="Previous Post: 安装 GitLab 到 Ubuntu14.04，配置和迁移">&laquo; 安装 GitLab 到 Ubuntu14.04，配置和迁移</a>
+        <a class="basic-alignment left" href="/blog/2016/08/03/php-git-hooks/" title="Previous Post: 如何简单的在 php 下运行 git hook，实现自动部署">&laquo; 如何简单的在 php 下运行 git hook，实现自动部署</a>
       
-      
-        <a class="basic-alignment right" href="/blog/2016/08/03/php-git-hooks/" title="Next Post: 如何简单的在 php 下运行 git hook，实现自动部署">如何简单的在 php 下运行 git hook，实现自动部署 &raquo;</a>
       
     </p>
   </footer>
@@ -142,11 +175,11 @@
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2016/08/03/php-git-hooks/">如何简单的在 Php 下运行 Git Hook，实现自动部署</a>
+        <a href="/blog/2016/08/09/remote-mysql/">远程访问非标准 MySQL</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2016/07/29/105456/">Test</a>
+        <a href="/blog/2016/08/03/php-git-hooks/">如何简单的在 Php 下运行 Git Hook，实现自动部署</a>
       </li>
     
       <li class="post">

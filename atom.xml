@@ -4,7 +4,7 @@
   <title><![CDATA[文志新的博客]]></title>
   <link href="http://wenzhixin.github.io/atom.xml" rel="self"/>
   <link href="http://wenzhixin.github.io/"/>
-  <updated>2016-08-03T02:44:27+00:00</updated>
+  <updated>2016-08-09T03:34:41+00:00</updated>
   <id>http://wenzhixin.github.io/</id>
   <author>
     <name><![CDATA[文志新]]></name>
@@ -12,6 +12,49 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[远程访问非标准 MySQL]]></title>
+    <link href="http://wenzhixin.github.io/blog/2016/08/09/remote-mysql/"/>
+    <updated>2016-08-09T11:02:05+00:00</updated>
+    <id>http://wenzhixin.github.io/blog/2016/08/09/remote-mysql</id>
+    <content type="html"><![CDATA[<p>当使用非标准安装 MySQL 的情况下，如何开启远程访问呢？对这个问题进行了研究。</p>
+
+<ol>
+<li>登录到远程服务器，登录 MySQL：</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mysql -uroot -ppassword</span></code></pre></td></tr></table></div></figure>
+
+
+<p>报了下面的错误：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Can’t connect to local MySQL server through socket /tmp/mysql.sock</span></code></pre></td></tr></table></div></figure>
+
+
+<p>原因是 sock 文件不是默认的位置，而是 <code>/tmp/mysql-generic-5.5.40.sock</code>，做个软链接解决：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ln -s /tmp/mysql-generic-5.5.40.sock /tmp/mysql.sock</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>可以正常登录了，退出到本地，登录发现还是不能访问，还需要修改 MySQL 参数，重启即可：</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>skip_networking: on #开启即启动端口监听，如需要使用IP地址访问请开启</span></code></pre></td></tr></table></div></figure>
+
+
+<hr />
+
+<p>标准 MySQL 设置详见文章：<a href="http://wenzhixin.net.cn/2012/05/15/mysql_open_the_remote_access_ubuntu">MySQL、Postgres 开启远程访问权限</a></p>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[如何简单的在 Php 下运行 Git Hook，实现自动部署]]></title>
@@ -83,15 +126,6 @@
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">URL</span><span class="o">:</span> <span class="nx">api</span><span class="o">.</span><span class="nx">php</span><span class="o">?</span><span class="nb">key</span><span class="o">=</span><span class="nx">xxx</span>
 </span></code></pre></td></tr></table></div></figure>
 
-]]></content>
-  </entry>
-  
-  <entry>
-    <title type="html"><![CDATA[Test]]></title>
-    <link href="http://wenzhixin.github.io/blog/2016/07/29/105456/"/>
-    <updated>2016-07-29T10:52:54+00:00</updated>
-    <id>http://wenzhixin.github.io/blog/2016/07/29/105456</id>
-    <content type="html"><![CDATA[<p>Hello Test.</p>
 ]]></content>
   </entry>
   

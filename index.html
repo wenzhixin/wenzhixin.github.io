@@ -9,10 +9,9 @@
   <meta name="author" content="文志新">
 
   
-  <meta name="description" content="由于 php 是运行在 nginx 账户下的，直接使用 shell_exec 会出现权限问题，所以我们首先需要解决权限问题。 登录到 www-data 用户 1
-2
-usermod -s /bin/bash www-data
-su www-data 创建 id_rsa 并将内容复制到目标 git &hellip;">
+  <meta name="description" content="当使用非标准安装 MySQL 的情况下，如何开启远程访问呢？对这个问题进行了研究。 登录到远程服务器，登录 MySQL： 1
+mysql -uroot -ppassword 报了下面的错误： 1
+Can’t connect to local MySQL server through socket &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -68,6 +67,69 @@ su www-data 创建 id_rsa 并将内容复制到目标 git &hellip;">
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2016/08/09/remote-mysql/">远程访问非标准 MySQL</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2016-08-09T11:02:05+00:00'><span class='date'><span class='date-month'>Aug</span> <span class='date-day'>9</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>11:02 am</span></time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>当使用非标准安装 MySQL 的情况下，如何开启远程访问呢？对这个问题进行了研究。</p>
+
+<ol>
+<li>登录到远程服务器，登录 MySQL：</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>mysql -uroot -ppassword</span></code></pre></td></tr></table></div></figure>
+
+
+<p>报了下面的错误：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>Can’t connect to local MySQL server through socket /tmp/mysql.sock</span></code></pre></td></tr></table></div></figure>
+
+
+<p>原因是 sock 文件不是默认的位置，而是 <code>/tmp/mysql-generic-5.5.40.sock</code>，做个软链接解决：</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ln -s /tmp/mysql-generic-5.5.40.sock /tmp/mysql.sock</span></code></pre></td></tr></table></div></figure>
+
+
+<ol>
+<li>可以正常登录了，退出到本地，登录发现还是不能访问，还需要修改 MySQL 参数，重启即可：</li>
+</ol>
+
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>skip_networking: on #开启即启动端口监听，如需要使用IP地址访问请开启</span></code></pre></td></tr></table></div></figure>
+
+
+<hr />
+
+<p>标准 MySQL 设置详见文章：<a href="http://wenzhixin.net.cn/2012/05/15/mysql_open_the_remote_access_ubuntu">MySQL、Postgres 开启远程访问权限</a></p>
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -155,35 +217,6 @@ su www-data 创建 id_rsa 并将内容复制到目标 git &hellip;">
 </pre></td><td class='code'><pre><code class='php'><span class='line'><span class="nx">URL</span><span class="o">:</span> <span class="nx">api</span><span class="o">.</span><span class="nx">php</span><span class="o">?</span><span class="nb">key</span><span class="o">=</span><span class="nx">xxx</span>
 </span></code></pre></td></tr></table></div></figure>
 
-</div>
-  
-  
-
-
-    </article>
-  
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2016/07/29/105456/">Test</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2016-07-29T10:52:54+00:00'><span class='date'><span class='date-month'>Jul</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2016</span></span> <span class='time'>10:52 am</span></time>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>Hello Test.</p>
 </div>
   
   
@@ -742,11 +775,11 @@ su www-data 创建 id_rsa 并将内容复制到目标 git &hellip;">
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2016/08/03/php-git-hooks/">如何简单的在 Php 下运行 Git Hook，实现自动部署</a>
+        <a href="/blog/2016/08/09/remote-mysql/">远程访问非标准 MySQL</a>
       </li>
     
       <li class="post">
-        <a href="/blog/2016/07/29/105456/">Test</a>
+        <a href="/blog/2016/08/03/php-git-hooks/">如何简单的在 Php 下运行 Git Hook，实现自动部署</a>
       </li>
     
       <li class="post">
